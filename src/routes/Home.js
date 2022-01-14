@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import Todo from "../components/Todo";
-import { actionCreators } from "../store";
+import { addTodo } from "../store";
 
 function Home({ todos, addToDo }) {
   // console.log(Object.entries(todos));
   const items = JSON.parse(localStorage.getItem("TodoItems"));
-  // console.log(todos.length, typeof todos, "todos data");
+  // console.log(todos, typeof todos, "todos data");
   // console.log(items, "items data");
   if (todos.length === 0) {
     // console.log("-------");
@@ -58,7 +58,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // console.log(dispatch, ownProps);
   return {
-    addToDo: (text) => dispatch(actionCreators.addToDo(text)),
+    addToDo: (text) => dispatch(addTodo(text)),
   };
 };
 

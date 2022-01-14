@@ -11,22 +11,34 @@
 //   REGISTER,
 // } from "redux-persist";
 
-const ADD = "ADD";
-const DELETE = "DELETE";
+import {
+  configureStore,
+  createAction,
+  createReducer,
+  createSlice,
+} from "@reduxjs/toolkit";
 
-const addToDo = (text) => {
-  return {
-    type: ADD,
-    text,
-  };
-};
+// const ADD = "ADD";
+// const DELETE = "DELETE";
 
-const deleteToDo = (id) => {
-  return {
-    type: DELETE,
-    id: parseInt(id),
-  };
-};
+// const addToDo = (text) => {
+//   return {
+//     type: ADD,
+//     text,
+//   };
+// };
+
+// const deleteToDo = (id) => {
+//   return {
+//     type: DELETE,
+//     id: parseInt(id),
+//   };
+// };
+
+// toolkit 사용
+// createAction 으로 type, payload 바로 생성
+// const addToDo = createAction("ADD");
+// const deleteToDo = createAction("DELETE");
 
 function saveLocal(todos) {
   // setItem 은 하나의 값으로 로컬에 저장함(그냥 쓰면 마지막값만 저장됨)
@@ -35,23 +47,62 @@ function saveLocal(todos) {
   return todos;
 }
 
-export const reducer = (state = [], action) => {
-  // console.log(state, typeof state, "state");
-  // console.log(action, "action data");
-  // console.log(Object.entries(state));
-  switch (action.type) {
-    case ADD:
-      const todos = [{ text: action.text, id: Date.now() }, ...state];
-      return saveLocal(todos);
-    case DELETE:
-      const dels = state.filter((toDo) => toDo.id !== action.id);
-      return saveLocal(dels);
-    default:
-      return state;
-  }
-};
+// export const reducer = (state = [], action) => {
+//   // console.log(state, typeof state, "state");
+//   // console.log(action, "action data");
+//   // console.log(Object.entries(state));
+//   switch (action.type) {
+//     // case ADD:
+//     case addToDo.type:
+//       // console.log(action.payload);
+//       // const todos = [{text: action.text, id: Date.now()}, ...state]
+//       const todos = [{ text: action.payload, id: Date.now() }, ...state];
+//       return saveLocal(todos);
+//     // case DELETE:
+//     case deleteToDo.type:
+//       // console.log(action);
+//       // const dels = state.filter((todo) => todo.id !== action.id);
+//       const dels = state.filter((toDo) => toDo.id !== action.payload);
+//       return saveLocal(dels);
+//     default:
+//       return state;
+//   }
+// };
 
-export const actionCreators = {
-  addToDo,
-  deleteToDo,
-};
+// toolkit 사용
+// createReducer 는 immer 아래에서 실행되기 때문에 state mutate 가능하게 해줌(새로운 객체로 만들어줄 필요 없음)
+// export const reducer = createReducer([{ text: "test", id: 1 }], {
+//   [addToDo]: (state, action) => {
+//     state.push({ text: action.payload, id: Date.now() }); // but state를 nutate 하게되면 return 하지않음
+// return saveLocal(state);
+//   },
+//   [deleteToDo]: (state, action) => {
+//     let dels = state.filter((toDo) => toDo.id !== action.payload); // new state 를 return 해야함
+//     return saveLocal(dels);
+//   },
+// });
+
+// toolkit 사용
+export const toDo = createSlice({
+  name: "todoReducer",
+  initialState: [],
+  reducers: {
+    add: (state, action) => {
+      state.push({ text: action.payload, id: Date.now() });
+    },
+    delete: (state, action) => {
+      let dels = state.filter((toDo) => toDo.id !== action.payload);
+      return saveLocal(dels);
+    },
+  },
+});
+
+// console.log(toDo.actions);
+// toolkit 사용 (actions 자동 생성)
+export const addTodo = toDo.actions.add;
+export const deleteToDo = toDo.actions.delete;
+
+// export const actionCreators = {
+//   addTodo,
+//   deleteToDo,
+// };

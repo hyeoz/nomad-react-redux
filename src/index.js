@@ -1,12 +1,14 @@
+import { configureStore } from "@reduxjs/toolkit";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { createStore } from "redux";
 import App from "./components/App";
-import { reducer } from "./store";
+import { toDo } from "./store";
 
-const store = createStore(reducer);
+// const store = createStore(reducer);
+const store = configureStore({ reducer: toDo.reducer });
 
 // Redux Persist
 
